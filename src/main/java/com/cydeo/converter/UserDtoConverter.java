@@ -1,7 +1,7 @@
 package com.cydeo.converter;
 
 import com.cydeo.dto.UserDTO;
-import com.cydeo.service.impl.UserService;
+import com.cydeo.service.UserService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
