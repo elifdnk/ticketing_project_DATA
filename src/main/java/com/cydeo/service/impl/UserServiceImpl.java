@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
+
+
     @Override
     public List<UserDTO> listAllUsers() {
-        return null;
+
+  return null;
     }
 
     @Override
