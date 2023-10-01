@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteByUserName(String username) {
      userRepository.deleteByUserName(username);
-
     }
+
 
     @Override
     public UserDTO update(UserDTO user) {
@@ -60,5 +60,17 @@ public class UserServiceImpl implements UserService {
         //save the updated user in the DB
         userRepository.save(convertedUser);
         return findByUserName(user.getUserName());
+    }
+
+    @Override
+    public void delete(String username) {
+        //go to DB and get that user with username;
+        User user =userRepository.findByUserName(username);
+
+        //change the isdeleted field to true
+        user.setIsDeleted(true);
+
+        //save the obj in DB
+        userRepository.save(user);
     }
 }
