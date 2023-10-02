@@ -25,7 +25,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDTO getByProjectCode(String code) {
-        return null;
+        Project project = projectRepository.findByProjectCode(code);
+        return projectMapper.convertToDto(project);
+
     }
 
     @Override
@@ -43,13 +45,26 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void update(ProjectDTO dto) {
+        //go to DB and grab to dto ,why we try to get DB? This project has id now.
+        Project project = projectRepository.findByProjectCode(dto.getProjectCode());
 
+        //get dto and convert to entity.why we do that? because that is the obj we try to save in DB
+        Project convertedProject = projectMapper.convertToEntity(dto);
+
+        //before save, I geting the id project and I set this id to convertedProject
+        convertedProject.setId(project.getId());
+
+        //Project status is not in the form
+        convertedProject.setProjectStatus(project.getProjectStatus());
+
+        //save project
+        projectRepository.save(convertedProject);
     }
 
     @Override
     public void delete(String code) {
         // go to DB get that project with project code
-        Project project =projectRepository.findByProjectCode(code);
+        Project project = projectRepository.findByProjectCode(code);
 
         //change is deleted field to true
         project.setIsDeleted(true);
