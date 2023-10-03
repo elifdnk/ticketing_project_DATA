@@ -13,6 +13,7 @@ public interface ProjectService{
   void update(ProjectDTO dto);
   void delete(String code);
   void complete(String projectCode);
+  List<ProjectDTO> listAllProjectDetails(); // Who manager in the system, his/her project we see in the UI
 
 
 
