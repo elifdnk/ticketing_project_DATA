@@ -17,7 +17,9 @@ import java.time.LocalDate;
 @Where(clause = "is_deleted=false")
 public class Project extends BaseEntity{
 
+    @Column(unique = true)  //DB is not gonna able to create same code to another project // Project code must be unique
     private String projectCode;
+
     private String projectName;
 
     @Column(columnDefinition = "DATE")
