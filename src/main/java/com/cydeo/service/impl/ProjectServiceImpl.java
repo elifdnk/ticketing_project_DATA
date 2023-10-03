@@ -80,8 +80,12 @@ public class ProjectServiceImpl implements ProjectService {
         //change is deleted field to true
         project.setIsDeleted(true);
 
+        project.setProjectCode(project.getProjectCode() + "-" + project.getId()); //when we delete one project, this line change the id because we can use later same project code. //new code will be SP00-1  like this.
+
         //save the obj in DB
         projectRepository.save(project);
+
+        taskService.deleteByProject(projectMapper.convertToDto(project));
     }
 
     @Override
@@ -89,6 +93,9 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findByProjectCode(projectCode);
         project.setProjectStatus(Status.COMPLETE);
         projectRepository.save(project);
+
+        taskService.completeByProject(projectMapper.convertToDto(project));
+
     }
 
     @Override
