@@ -34,13 +34,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> listAllUsers() {
-        return userRepository.findAll(Sort.by("firstName")).stream().map(userMapper::convertToDto).collect(Collectors.toList());
+        //we remove Where condition because we will change find all method to  : findAllByIsDeletedOrderByFirstNameDesc
+
+        List<User> userList = userRepository.findAllByIsDeletedOrderByFirstNameDesc(false);
+        return userList.stream().map(userMapper::convertToDto).collect(Collectors.toList());
     }
 
     @Override
     public UserDTO findByUserName(String username) {
 
-        return userMapper.convertToDto(userRepository.findByUserName(username));
+        return userMapper.convertToDto(userRepository.findByUserNameAndIsDeleted(username,false));
     }
 
     @Override
@@ -49,16 +52,16 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
-    public void deleteByUserName(String username) {
-        userRepository.deleteByUserName(username);
-    }
+//    @Override
+//    public void deleteByUserName(String username) {
+//        userRepository.deleteByUserName(username);  // this method how we can do hard delete , we dont use this method anywhere
+//    }
 
 
     @Override
     public UserDTO update(UserDTO user) {
         //find current user
-        User user1 = userRepository.findByUserName(user.getUserName()); //this one has id
+        User user1 = userRepository.findByUserNameAndIsDeleted(user.getUserName(),false); //this one has id
 
         //Map update user dto to entity object
         User convertedUser = userMapper.convertToEntity(user); // this one doesnt have id
@@ -74,12 +77,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(String username) {
         //go to DB and get that user with username;
-        User user = userRepository.findByUserName(username);
+        User user = userRepository.findByUserNameAndIsDeleted(username,false);
 
         //control
         if(checkIfUserCanBeDeleted(user)){
             //change the isdeleted field to true
             user.setIsDeleted(true);
+
+            user.setUserName(user.getUserName()+"-"+user.getId());  // if I delete someone, his/hers username will be change ex:if ı delete harold, deleted harold username going to be like this :   harold@manager.com-2
 
             //save the obj in DB
             userRepository.save(user);
@@ -90,7 +95,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> listAllByRole(String role) {
 
-        List<User> users = userRepository.findByRoleDescriptionIgnoreCase(role);
+        List<User> users = userRepository.findByRoleDescriptionIgnoreCaseAndIsDeleted(role,false);
 
         return users.stream().map(userMapper::convertToDto).collect(Collectors.toList());
     }
